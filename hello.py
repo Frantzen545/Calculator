@@ -1,9 +1,10 @@
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-
+cors = CORS(app)
 
 def validate_call(request):
     key = request.headers.get('security_key')
@@ -25,11 +26,14 @@ def hello_world():
     else:
         message = result[1]
     data = { "message":message}
-    return jsonify(data)
+    response = jsonify(data)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 @app.route("/<name>")
 def hello_name(name):
+    print(name)
     result = validate_call(request)
     message = ''
     if result[0]:
@@ -37,4 +41,10 @@ def hello_name(name):
     else:
         message = result[1]
     data = { "message":message}
-    return jsonify(data)
+    response = jsonify(data)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
